@@ -86,7 +86,7 @@ rename_component() {
 
 # ── Dependency checks ─────────────────────────────────────────────────────────
 
-for cmd in git node npm python3; do
+for cmd in git python3; do
   command -v "$cmd" &>/dev/null || {
     echo "Error: '$cmd' is required but not found. Please install it and re-run."
     exit 1
@@ -113,7 +113,6 @@ askd "Version:"                                                  APP_VERSION    
 askd "Output directory:"                                         OUTPUT_DIR      "./$APP_SLUG"
 askd "GitHub username:"                                          GITHUB_USERNAME "sholtomaud"
 askd "GitHub repo name:"                                         GITHUB_REPO     "$APP_SLUG"
-askd "Run npm install now? (y/n):"                               INSTALL_NOW     "y"
 
 CLASS_PREFIX=$(pascalize "$APP_PREFIX")
 
@@ -131,6 +130,7 @@ printf "  %-22s %s\n" "Version:"          "$APP_VERSION"
 printf "  %-22s %s\n" "Output:"           "$OUTPUT_DIR"
 printf "  %-22s %s\n" "GitHub:"           "github.com/$GITHUB_USERNAME/$GITHUB_REPO"
 echo "──────────────────────────────────────────────────────"
+
 echo ""
 ask "Continue? (y/n):" CONFIRM
 [[ "$CONFIRM" =~ ^[Yy]$ ]] || { echo "Aborted."; exit 0; }
@@ -198,13 +198,6 @@ git init
 git add -A
 git commit -m "chore: scaffold $APP_NAME from pwa-template"
 
-# ── Optional npm install ──────────────────────────────────────────────────────
-
-if [[ "$INSTALL_NOW" =~ ^[Yy]$ ]]; then
-  echo "Installing dependencies..."
-  npm install
-fi
-
 # ── Done ──────────────────────────────────────────────────────────────────────
 
 echo ""
@@ -212,6 +205,7 @@ echo "=== Done! ==="
 echo ""
 echo "  cd $OUTPUT_DIR"
 echo "  make image     # build container image (first run)"
+echo "  make install   # install npm deps inside container"
 echo "  make dev       # dev server at http://localhost:5173"
 echo "  make test      # Playwright E2E test suite"
 echo ""
